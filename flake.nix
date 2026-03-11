@@ -40,6 +40,29 @@
       checks.${system} = {
         ts-css-modules-lint = self.packages.${system}.ts-css-modules-lint;
         devShell = self.devShells.${system}.default;
+        tests = pkgs.buildNpmPackage {
+          pname = "ts-css-modules-lint-tests";
+          version = "1.0.0";
+
+          src = ./.;
+
+          npmDepsHash = "sha256-S4bezih08O3jFiyCLZpuz8uFHWtLcYYMqDnKzBrbLhM=";
+
+          npmBuildScript = "build";
+
+          doCheck = true;
+          checkPhase = ''
+            runHook preCheck
+            npm test
+            runHook postCheck
+          '';
+
+          installPhase = ''
+            runHook preInstall
+            touch $out
+            runHook postInstall
+          '';
+        };
       };
 
       devShells.${system}.default = pkgs.mkShell {
